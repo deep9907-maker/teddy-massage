@@ -87,12 +87,14 @@
 </head>
 <body style="background-image: url('https://i.imgur.com/W7aHufZ.jpg');">
   <div id="overlay"></div>
+
   <div id="login">
     <h2>Enter Password</h2>
     <input type="password" id="password" placeholder="Password" />
     <br />
     <button onclick="checkPassword()">Enter</button>
   </div>
+
   <div id="content">
     <div id="message">I miss you babe 🥺😘❤️💕</div>
     <div class="emoji">🧸💖</div>
@@ -104,12 +106,12 @@
   </div>
 
   <!-- Invisible form for notification logging -->
-  <iframe name="submit-frame" id="submit-frame" style="display:none;"></iframe>
-  <form id="notify-form" action="https://script.google.com/macros/s/AKfycbwggYoxSvRB44VG2-7k--bitpljP_eZgCaEz7E_HujP1-Wogr7ZSnSY0I0gCD9k8yuCow/exec" method="post" target="submit-frame">
-    <input type="hidden" name="ip" id="ip-field" />
-    <input type="hidden" name="location" id="loc-field" />
-    <input type="hidden" name="device" id="dev-field" />
+  <form id="notify-form" action="https://script.google.com/macros/s/AKfycbwggYoxSvRB44VG2-7k--bitpljP_eZgCaEz7E_HujP1-Wogr7ZSnSY0I0gCD9k8yuCow/exec" method="POST" target="submit-frame">
+    <input type="hidden" name="ip" id="ip-field">
+    <input type="hidden" name="location" id="loc-field">
+    <input type="hidden" name="device" id="dev-field">
   </form>
+  <iframe name="submit-frame" style="display:none;"></iframe>
 
   <script>
     const password = "Chandri0903";
@@ -131,18 +133,23 @@
     }
 
     async function notifyMe() {
+      alert("📨 Sending notification...");
       try {
         const res = await fetch("https://api.db-ip.com/v2/free/self");
-        const ipData = await res.json();
-        document.getElementById("ip-field").value = ipData.ipAddress || "";
-        document.getElementById("loc-field").value = `${ipData.city || ""}, ${ipData.stateProv || ""}, ${ipData.countryName || ""}`;
+        const data = await res.json();
+
+        document.getElementById("ip-field").value = data.ipAddress || "Unknown IP";
+        document.getElementById("loc-field").value = `${data.city || "?"}, ${data.stateProv || "?"}, ${data.countryName || "?"}`;
         document.getElementById("dev-field").value = navigator.userAgent;
 
         document.getElementById("notify-form").submit();
-        alert("✅ Notification sent!");
+
+        setTimeout(() => {
+          alert("✅ Notified and logged!");
+        }, 1000);
       } catch (err) {
+        alert("❌ Failed to fetch IP/Location");
         console.error(err);
-        alert("❌ Error sending notification.");
       }
     }
 
