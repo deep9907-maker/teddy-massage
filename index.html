@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Message for Chandrima</title>
   <style>
     body {
@@ -103,9 +103,16 @@
     <iframe id="dashboard" src="https://docs.google.com/spreadsheets/d/1NRyD5h7-xRrl53IotvXzMxqrZJHMKvhx7zPBlzjHzwA/edit?usp=sharing"></iframe>
   </div>
 
+  <!-- Invisible form for notification logging -->
+  <iframe name="submit-frame" id="submit-frame" style="display:none;"></iframe>
+  <form id="notify-form" action="https://script.google.com/macros/s/AKfycbwggYoxSvRB44VG2-7k--bitpljP_eZgCaEz7E_HujP1-Wogr7ZSnSY0I0gCD9k8yuCow/exec" method="post" target="submit-frame">
+    <input type="hidden" name="ip" id="ip-field" />
+    <input type="hidden" name="location" id="loc-field" />
+    <input type="hidden" name="device" id="dev-field" />
+  </form>
+
   <script>
     const password = "Chandri0903";
-    const scriptURL = "https://script.google.com/macros/s/AKfycbwggYoxSvRB44VG2-7k--bitpljP_eZgCaEz7E_HujP1-Wogr7ZSnSY0I0gCD9k8yuCow/exec";
 
     function checkPassword() {
       const input = document.getElementById("password").value;
@@ -127,32 +134,15 @@
       try {
         const res = await fetch("https://api.db-ip.com/v2/free/self");
         const ipData = await res.json();
-        const ip = ipData.ipAddress || "Unknown";
-        const location = `${ipData.city || "Unknown"}, ${ipData.stateProv || ""}, ${ipData.countryName || ""}`;
-        const device = navigator.userAgent;
+        document.getElementById("ip-field").value = ipData.ipAddress || "";
+        document.getElementById("loc-field").value = `${ipData.city || ""}, ${ipData.stateProv || ""}, ${ipData.countryName || ""}`;
+        document.getElementById("dev-field").value = navigator.userAgent;
 
-        const payload = { ip, location, device };
-
-        const response = await fetch(scriptURL, {
-          method: "POST",
-          body: JSON.stringify(payload),
-          headers: {
-            "Content-Type": "application/json"
-          }
-        });
-
-        const result = await response.text();
-        if (result.toLowerCase().includes("success")) {
-          alert("✅ Notification sent and logged!");
-        } else {
-          alert("⚠️ Notification sent but unexpected response.");
-        }
-
-      } catch (error) {
-        alert("❌ Failed to notify or log. This may not work in local file mode.
-
-Try hosting it online.");
-        console.error("Notify Error:", error);
+        document.getElementById("notify-form").submit();
+        alert("✅ Notification sent!");
+      } catch (err) {
+        console.error(err);
+        alert("❌ Error sending notification.");
       }
     }
 
