@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Message for Chandrima</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      height: 100vh;
+      margin: 0;
+      background-size: cover;
+      background-position: center;
+      transition: background-image 0.5s ease-in-out;
+    }
+    #overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      backdrop-filter: blur(4px);
+      z-index: 0;
+    }
+    #login, #content {
+      text-align: center;
+      background: rgba(255, 255, 255, 0.85);
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.2);
+      z-index: 1;
+      position: relative;
+    }
+    input[type="password"] {
+      padding: 10px;
+      margin-top: 10px;
+      width: 200px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+    button {
+      padding: 10px 20px;
+      margin: 10px;
+      background-color: #ff6f91;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    #content {
+      display: none;
+      color: #333;
+    }
+    #message {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 20px;
+      animation: fadeIn 2s ease-in-out;
+    }
+    .emoji {
+      font-size: 32px;
+      animation: float 3s infinite ease-in-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes float {
+      0% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+      100% { transform: translateY(0); }
+    }
+    iframe {
+      margin-top: 20px;
+      width: 90%;
+      max-width: 600px;
+      height: 300px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      display: none;
+    }
+  </style>
+</head>
+<body style="background-image: url('https://i.imgur.com/W7aHufZ.jpg');">
+  <div id="overlay"></div>
+  <div id="login">
+    <h2>Enter Password</h2>
+    <input type="password" id="password" placeholder="Password" />
+    <br />
+    <button onclick="checkPassword()">Enter</button>
+  </div>
+  <div id="content">
+    <div id="message">I miss you babe 🥺😘❤️💕</div>
+    <div class="emoji">🧸💖</div>
+    <br />
+    <button onclick="callMe()">Call Me</button>
+    <button onclick="notifyMe()">Tap to Notify</button>
+    <button onclick="showDashboard()">Show Dashboard</button>
+    <iframe id="dashboard" src="https://docs.google.com/spreadsheets/d/1NRyD5h7-xRrl53IotvXzMxqrZJHMKvhx7zPBlzjHzwA/edit?usp=sharing"></iframe>
+  </div>
+
+  <script>
+    const password = "Chandri0903";
+    const scriptURL = "https://script.google.com/macros/s/AKfycbwggYoxSvRB44VG2-7k--bitpljP_eZgCaEz7E_HujP1-Wogr7ZSnSY0I0gCD9k8yuCow/exec";
+
+    function checkPassword() {
+      const input = document.getElementById("password").value;
+      if (input === password) {
+        document.getElementById("login").style.display = "none";
+        document.getElementById("content").style.display = "block";
+        document.body.style.backgroundImage = "url('https://i.imgur.com/bKZrFbA.jpg')";
+        document.getElementById("overlay").style.display = "none";
+      } else {
+        alert("Incorrect Password");
+      }
+    }
+
+    function callMe() {
+      window.location.href = "tel:+919907389614";
+    }
+
+    async function notifyMe() {
+      try {
+        const res = await fetch("https://api.db-ip.com/v2/free/self");
+        const ipData = await res.json();
+        const ip = ipData.ipAddress || "Unknown";
+        const location = `${ipData.city || "Unknown"}, ${ipData.stateProv || ""}, ${ipData.countryName || ""}`;
+        const device = navigator.userAgent;
+
+        const payload = { ip, location, device };
+
+        const response = await fetch(scriptURL, {
+          method: "POST",
+          body: JSON.stringify(payload),
+          headers: {
+            "Content-Type": "application/json"
+          }
+        });
+
+        const result = await response.text();
+        if (result.toLowerCase().includes("success")) {
+          alert("✅ Notification sent and logged!");
+        } else {
+          alert("⚠️ Notification sent but unexpected response.");
+        }
+
+      } catch (error) {
+        alert("❌ Failed to notify or log. This may not work in local file mode.
+
+Try hosting it online.");
+        console.error("Notify Error:", error);
+      }
+    }
+
+    function showDashboard() {
+      document.getElementById("dashboard").style.display = "block";
+    }
+  </script>
+</body>
+</html>
